@@ -81,7 +81,7 @@ export default function App() {
   useEffect(() => {
     Promise.all(["aircraft", "bases", "leadership", "news", "organization", "organization/structure", "values"].map(async (endpoint) => [endpoint === "organization/structure" ? "organizationStructure" : endpoint, await getJson(`/${endpoint}`)]))
       .then((entries) => { setData(Object.fromEntries(entries)); setLoadError(""); })
-      .catch((error) => setLoadError(error.message));
+      .catch((error) => setLoadError(error instanceof Error && typeof error.message === "string" ? error.message : "An unexpected error occurred while loading public information."));
   }, []);
 
   useEffect(() => { setMobileMenu(false); }, [route]);

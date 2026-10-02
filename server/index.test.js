@@ -72,4 +72,8 @@ test("the API app serves its endpoints when mounted as a serverless handler", as
   const response = await fetch(`http://127.0.0.1:${address.port}/api/health`);
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { status: "ok" });
+
+  const structureResponse = await fetch(`http://127.0.0.1:${address.port}/api/organization/structure`);
+  assert.equal(structureResponse.status, 200);
+  assert.deepEqual(await structureResponse.json(), organizationStructure);
 });
