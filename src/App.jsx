@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Award, BriefcaseBusiness, Building2, CalendarDays, ChevronDown, ChevronRight,
-  CirclePlay, Compass, Facebook, Headphones, Instagram, Landmark, Mail, Menu, Plane, Radio, Shield, Ship, Users, Wrench, X
+  CirclePlay, Compass, Landmark, Mail, Menu, Plane, Radio, Shield, Ship, Users, Wrench, X
 } from "lucide-react";
 import { getJson } from "./api.js";
 import { aircraftImages } from "./aircraftImages.js";
@@ -12,11 +12,11 @@ import viennaDiplomacy from "../Media/optimized/Viennadiplomacy.jpg";
 import belgianRoundel from "../Media/Roundel_of_Belgium.svg.png";
 
 const aircraftGroups = ["All aircraft", "Fighter", "Transport", "Helicopter", "Training", "Support"];
-const newsGroups = ["All", "Formation", "Leadership", "Community"];
+const newsGroups = ["All", "Formation", "Leadership", "Development", "Foreign affairs", "Operations"];
 const mediaGallery = [
   { src: heroPoster, title: "Hero1", caption: "Hero artwork · Air Force", alt: "F-16 aircraft artwork with Belgian Air Force branding" },
-  { src: recruitmentPoster, title: "Recruitment poster", caption: "Community poster · Air Force", alt: "Belgian Air Force recruitment poster with aircraft artwork and a QR code" },
-  { src: viennaDiplomacy, title: "Vienna diplomacy", caption: "flight · 24 September 2026", alt: "transport flight poster showing a flight to Vienna, Austria" },
+  { src: recruitmentPoster, title: "Belgian Air Force – 2026 Recruitment Poster", caption: "Recruitment · 2026", alt: "Belgian Air Force recruitment poster with aircraft artwork and a QR code" },
+  { src: viennaDiplomacy, title: "Sioux flight to Vienna", caption: "Official visit · 24 September 2026", alt: "transport flight poster showing a flight to Vienna, Austria" },
   { src: belgianRoundel, title: "Roundel of Belgium", caption: "Insignia · Reference artwork", alt: "Roundel of Belgium in black, yellow and red concentric circles" }
 ];
 const dateLabel = (value) => new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
@@ -71,7 +71,7 @@ function ArrowLink({ href, children }) { return <a className="arrow-link" href={
 
 export default function App() {
   const route = useHashRoute();
-  const [data, setData] = useState({ aircraft: [], bases: [], leadership: [], news: [], organization: [], organizationStructure: { wings: [], squadronRoles: [] }, values: [] });
+  const [data, setData] = useState({ aircraft: [], bases: [], force: null, leadership: [], news: [], organization: [], organizationStructure: { commandStaff: [], wings: [], squadronRoles: [], supportUnits: [] }, values: [] });
   const [loadError, setLoadError] = useState("");
   const [category, setCategory] = useState("All");
   const [aircraftFilter, setAircraftFilter] = useState("All aircraft");
@@ -79,7 +79,7 @@ export default function App() {
   const [contactState, setContactState] = useState("");
 
   useEffect(() => {
-    Promise.all(["aircraft", "bases", "leadership", "news", "organization", "organization/structure", "values"].map(async (endpoint) => [endpoint === "organization/structure" ? "organizationStructure" : endpoint, await getJson(`/${endpoint}`)]))
+    Promise.all(["aircraft", "bases", "force", "leadership", "news", "organization", "organization/structure", "values"].map(async (endpoint) => [endpoint === "organization/structure" ? "organizationStructure" : endpoint, await getJson(`/${endpoint}`)]))
       .then((entries) => { setData(Object.fromEntries(entries)); setLoadError(""); })
       .catch((error) => setLoadError(error instanceof Error && typeof error.message === "string" ? error.message : "An unexpected error occurred while loading public information."));
   }, []);
@@ -121,10 +121,10 @@ export default function App() {
       {routeType === "aircraft" && !routeId && <AircraftPage aircraft={filteredAircraft} filter={aircraftFilter} onFilter={setAircraftFilter} />}
       {routeType === "bases" && <Bases data={data} selectedId={routeId} />}
       {routeType === "news" && routeId ? <NewsDetail item={data.news.find((item) => item.id === routeId)} /> : routeType === "news" && <NewsPage news={filteredNews} category={category} onCategory={setCategory} />}
-      {routeType === "recruitment" && <Recruitment />}
+      {routeType === "recruitment" && <Recruitment profile={data.force} />}
       {routeType === "media" && <Media aircraft={data.aircraft} />}
-      {routeType === "contact" && <Contact onSubmit={submitContact} message={contactState} />}
-      {["accessibility", "privacy", "legal"].includes(routeType) && <PolicyPage kind={routeType} />}
+      {routeType === "contact" && <Contact onSubmit={submitContact} message={contactState} profile={data.force} />}
+      {["accessibility", "privacy", "legal"].includes(routeType) && <PolicyPage kind={routeType} data={data} />}
       {!["home", "about", "leadership", "organization", "missions", "aircraft", "bases", "news", "recruitment", "media", "contact", "accessibility", "privacy", "legal"].includes(routeType) && <NotFound />}
     </main>
 
@@ -137,15 +137,15 @@ function Home({ data }) {
     <section className="hero">
       <img className="hero-poster" src={heroPoster} alt="" fetchPriority="high" />
       <div className="hero-scrim" />
-      <div className="hero-content"><Eyebrow>BELGIAN AIR FORCE</Eyebrow><h1>Air power.<br /><em>Built for the skies.</em></h1><p>A community-led air force bringing together pilots, units and support teams.</p><div className="hero-actions"><LinkButton href="#missions">Explore the force</LinkButton><a href="#about" className="hero-secondary">Our story <ArrowDown size={14} /></a></div></div>
+      <div className="hero-content"><Eyebrow>BELGIAN AIR FORCE</Eyebrow><h1>Air power.<br /><em>Built for the skies.</em></h1><p>{data.force?.mission ?? "Safeguarding Belgian and allied airspace, supporting joint operations and contributing to international security."}</p><div className="hero-actions"><LinkButton href="#missions">Our mission</LinkButton><a href="#about" className="hero-secondary">Our story <ArrowDown size={14} /></a></div></div>
       <div className="hero-index"><span>01</span><i /> AIR FORCE</div>
-      <div className="hero-side-label">FLIGHT · TEAMWORK · COMMUNITY</div>
+      <div className="hero-side-label">READINESS · SERVICE · COOPERATION</div>
     </section>
-    <div className="notice"><span className="notice-seal"><Shield size={16} /></span><p><strong>A strong force is shaped by its community.</strong> Pilots, organizers and support members build each flight together.</p><a href="#organization">Meet the teams <ArrowRight size={14} /></a></div>
-    <section className="content-section mission-intro"><div className="mission-copy"><Eyebrow>OUR AIR FORCE</Eyebrow><h2>A branch.<br />One shared purpose.</h2></div><div className="mission-detail"><p>The Belgian Air Force brings members together for flying, training, unit activity and community events.</p><p>Explore the force's history, leadership, aircraft, bases and the people who support its activities.</p><LinkButton href="#about" quiet>About the Belgian Air Force</LinkButton></div><div className="mission-stamp"><span>BAF</span><small>AIR FORCE</small></div></section>
-    <section className="feature-dark"><div className="section-wrap"><SectionTitle eyebrow="AIRCRAFT" title="Aircraft in the roster" text="Explore aircraft types represented in the air force." action={<ArrowLink href="#aircraft">Explore the roster</ArrowLink>} /><div className="featured-grid">{data.aircraft.slice(0, 3).map((item, index) => <AircraftCard key={item.id} item={item} index={index} />)}</div></div></section>
-    <section className="content-section news-preview"><SectionTitle eyebrow="COMMUNITY UPDATES" title="Notes from the force" text="Background, activity themes and updates from the community." action={<ArrowLink href="#news">All updates</ArrowLink>} /><div className="news-grid">{data.news.slice(0, 3).map((item) => <NewsCard key={item.id} item={item} />)}</div></section>
-    <Callout href="#recruitment" kicker="TAKE PART" title="Find your place in the community." text="Learn about joining the air force and the different ways members contribute." action="Explore participation" />
+    <div className="notice"><span className="notice-seal"><Shield size={16} /></span><p><strong>Independent force identity.</strong> {data.force?.affiliationPolicy ?? "The Belgian Air Force maintains an independent identity."}</p><a href="#organization">Explore the structure <ArrowRight size={14} /></a></div>
+    <section className="content-section mission-intro"><div className="mission-copy"><Eyebrow>OUR AIR FORCE</Eyebrow><h2>A branch.<br />One shared purpose.</h2></div><div className="mission-detail"><p>{data.force?.mission}</p><p>Explore the force's history, leadership, aircraft, stations, organization and international relationships.</p><LinkButton href="#about" quiet>About the Belgian Air Force</LinkButton></div><div className="mission-stamp"><span>BAF</span><small>AIR FORCE</small></div></section>
+    <section className="feature-dark"><div className="section-wrap"><SectionTitle eyebrow="AIRCRAFT" title="Aircraft in the force" text="Fleet types, variants and published inventory status." action={<ArrowLink href="#aircraft">Explore the fleet</ArrowLink>} /><div className="featured-grid">{data.aircraft.filter((item) => ["f-16a", "f-35a", "rafale"].includes(item.id)).map((item, index) => <AircraftCard key={item.id} item={item} index={index} />)}</div></div></section>
+    <section className="content-section news-preview"><SectionTitle eyebrow="FORCE UPDATES" title="History and current affairs" text="Milestones, capability development and international engagement." action={<ArrowLink href="#news">All updates</ArrowLink>} /><div className="news-grid">{data.news.slice(0, 3).map((item) => <NewsCard key={item.id} item={item} />)}</div></section>
+    <Callout href="#recruitment" kicker="RECRUITMENT" title="Enlist in the Belgian Air Force." text="Contact the Recruitment Office to learn about joining and current application steps." action="Contact recruitment" />
   </>;
 }
 
@@ -154,43 +154,48 @@ function PageHero({ eyebrow, title, intro, variant = "transport", photo }) {
 }
 
 function About({ data }) {
+  const profile = data.force;
   return <>
-    <PageHero eyebrow="ABOUT THE BELGIAN AIR FORCE" title="A story built in the skies." intro="An aviation community with its own identity, organization and shared history." variant="transport" />
-    <section className="content-section editorial"><div className="editorial-aside"><Eyebrow>OUR STORY</Eyebrow><span className="big-year">2025<small>FORMED AS AN<br />AVIATION BRANCH</small></span></div><div className="editorial-copy"><h2>Created for shared aviation.</h2><p>The Belgian Air Force was founded on 11 February 2025. Members formed an aviation branch within an armed-forces community, coming together to fly, train and organize.</p><p>The group has developed its own command roles, unit structure and aircraft roster as its community has grown.</p><p>Today, the air force brings members together through flying, learning, coordination and creative projects.</p></div></section>
-    <section className="timeline-section"><div className="section-wrap"><SectionTitle eyebrow="AIR FORCE MILESTONES" title="The group's development" text="A short overview of the community's history." /><div className="timeline">{[{year:"2025",text:"The group is founded by Air France 2281 and begins building an aviation organization."},{year:"2025–26",text:"The community expands its command roles, specialist units and aircraft roster."},{year:"2026",text:"The Belgian Air Force name is reaffirmed as the group's identity."},{year:"ONGOING",text:"Members continue to develop flying, training and community activities."}].map((item)=><article className="timeline-item" key={item.year}><span>{item.year}</span><i /><p>{item.text}</p></article>)}</div></div></section>
-    <section className="content-section values-section"><SectionTitle eyebrow="WHAT GUIDES US" title="Principles put into practice" text="Values matter most when they guide decisions, teamwork and daily conduct." /><div className="values-grid">{data.values.map((value,index)=><article className="value-card" key={value.title}><span>0{index+1}</span><h3>{value.title}</h3><p>{value.description}</p></article>)}</div></section>
+    <PageHero eyebrow="ABOUT THE BELGIAN AIR FORCE" title="A force with a clear purpose." intro="The aerial warfare branch of Belgium, responsible for protecting airspace and supporting national and international operations." variant="transport" />
+    <section className="content-section editorial"><div className="editorial-aside"><Eyebrow>OUR IDENTITY</Eyebrow><span className="big-year">2025<small>FOUNDED<br/>{profile?.foundingDate}</small></span></div><div className="editorial-copy"><h2>{profile?.name}</h2><p>{profile?.mission}</p><p>{profile?.vision}</p><p><strong>Headquarters:</strong> {profile?.headquarters}. The force code is {profile?.code}; its Dutch and French names are {profile?.languages?.join(" and ")}.</p><p><strong>Founded by:</strong> {profile?.foundedBy}. The membership roster is not published.</p></div></section>
+    <section className="content-section"><SectionTitle eyebrow="MISSION & FUNCTIONS" title="How the force serves" text="Five core functions describe the Belgian Air Force's responsibilities."/><div className="mission-cards">{profile?.functions?.map((item,index)=><InfoCard key={item.title} icon={[Shield,Plane,Radio,Award,Compass][index]} title={item.title} text={item.description}/>)}</div></section>
+    <section className="timeline-section"><div className="section-wrap"><SectionTitle eyebrow="HISTORY" title="Key milestones" text="Founding, reorganization, development and recorded events."/><div className="timeline">{profile?.history?.map((item)=><article className="timeline-item" key={item.date+item.title}><span>{item.date}</span><i/><div><h3>{item.title}</h3><p>{item.description}</p></div></article>)}</div><div className="recognition-list">{profile?.recognition?.map((record)=><span key={record.label}><strong>{record.label}:</strong> {record.date}</span>)}</div></div></section>
+    <section className="content-section"><SectionTitle eyebrow="FOREIGN AFFAIRS" title="International relationships" text="Publicly stated partnerships, agreements and policy positions."/><div className="three-cards">{profile?.foreignAffairs?.map((item)=><InfoCard key={item.title} icon={Compass} title={item.title} text={item.description}/>)}</div></section>
+    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="TECHNOLOGY & DEVELOPMENT" title="Systems and technical partnerships" text="Programs described in the force's development record."/><div className="three-cards">{profile?.technology?.map((item)=><InfoCard key={item.title} icon={Radio} title={item.title} text={item.description}/>)}</div></div></section>
+    <section className="content-section values-section"><SectionTitle eyebrow="WHAT GUIDES US" title="Principles put into practice" text="Values matter when they guide decisions, teamwork and daily conduct."/><div className="values-grid">{data.values.map((value,index)=><article className="value-card" key={value.title}><span>0{index+1}</span><h3>{value.title}</h3><p>{value.description}</p></article>)}</div></section>
+    <div className="editorial-note"><Shield size={17}/><p>{profile?.rightsNotice}</p></div>
   </>;
 }
 
 function Leadership({ data }) {
   return <>
-    <PageHero eyebrow="AIR FORCE LEADERSHIP" title="Command within the community." intro="Meet the leaders who guide the air force and its units." variant="fighter" />
-    <section className="content-section"><SectionTitle eyebrow="BELGIAN AIR FORCE" title="Force leadership" text="The public leadership roster introduces the people who guide the group." /><div className="leader-grid">{data.leadership.map((leader,index)=><article className="leader-card" key={leader.id}><div className="leader-portrait"><span><Users size={30} /></span><b>LEADERSHIP PROFILE · {String(index+1).padStart(2,"0")}</b></div><div className="leader-info"><Eyebrow>{leader.title}</Eyebrow><h3>{leader.name}</h3><p>{leader.biography}</p><div className="focus-tags">{leader.focus.map((focus)=><span key={focus}>{focus}</span>)}</div></div></article>)}</div></section>
-    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="COMMUNITY LEADERSHIP" title="A shared responsibility" text="Command teams organize participation, training and community standards." /><div className="three-cards"><InfoCard icon={Compass} title="Set direction" text="Coordinate the group's activities and keep its structure clear."/><InfoCard icon={Users} title="Support members" text="Help pilots and specialist members learn, participate and collaborate."/><InfoCard icon={Award} title="Build trust" text="Lead respectfully and keep community activity welcoming and well organized." /></div></div></section>
+    <PageHero eyebrow="AIR FORCE LEADERSHIP" title="Command and oversight." intro="Publicly listed leadership of the Belgian Air Force." variant="fighter" />
+    <section className="content-section"><SectionTitle eyebrow="BELGIAN AIR FORCE" title="Force leadership" text="The public leadership roster and assigned responsibilities."/><div className="leader-grid">{data.leadership.map((leader,index)=><article className="leader-card" key={leader.id}><div className="leader-portrait"><span><Users size={30}/></span><b>LEADERSHIP · {String(index+1).padStart(2,"0")}</b></div><div className="leader-info"><Eyebrow>{leader.title}</Eyebrow><h3>{leader.name}</h3><p>{leader.biography}</p><div className="focus-tags">{leader.focus.map((focus)=><span key={focus}>{focus}</span>)}</div></div></article>)}</div></section>
+    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="COMMAND RESPONSIBILITIES" title="Oversight and direction" text="Command roles connect force-wide leadership with organizational oversight."/><div className="three-cards">{data.organizationStructure.commandStaff.map((item)=><InfoCard key={item.title} icon={Landmark} title={item.title} text={item.name}/>)}</div></div></section>
   </>;
 }
 
 function Organization({ data }) {
   return <>
-    <PageHero eyebrow="HOW WE ARE ORGANIZED" title="One branch. Many teams." intro="Command, flying units and specialist groups contribute to the air force." variant="helicopter" />
-    <section className="content-section"><SectionTitle eyebrow="AIR FORCE STRUCTURE" title="From headquarters to specialist units" text="The organization connects leadership with flying formations, training and support teams." /><div className="org-chart"><div className="org-root"><Landmark size={20}/><span>Belgian Air Force Headquarters</span><small>Command · coordination · administration</small></div><div className="org-connector" /><div className="org-branches">{data.organizationStructure.wings.map((formation)=><article className="org-branch" key={formation.id}><span className="org-mark"><Building2 size={18}/></span><div><Eyebrow>FORMATION</Eyebrow><h3>{formation.title}</h3><p>{formation.description}</p></div></article>)}</div></div><div className="squadron-section"><SectionTitle eyebrow="UNITS & SPECIALIST TEAMS" title="Different roles, shared purpose" text="These formations and unit labels describe the group's organization and activities."/><div className="squadron-grid">{data.organizationStructure.squadronRoles.map((unit)=><article className="squadron-card" key={unit.id}><span><Radio size={17}/></span><h3>{unit.title}</h3><p>{unit.description}</p></article>)}</div></div></section>
-    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="COMMUNITY FUNCTIONS" title="The work behind every flight" text="Flight activity depends on members who organize, teach and support the force." /><div className="org-role-grid">{data.organization.map((item)=><InfoCard key={item.id} icon={iconFor(item.icon)} title={item.title} text={item.description}/>)}</div></div></section>
-    <section className="content-section"><div className="org-callout"><div><Eyebrow>WINGS, SQUADRONS & SUPPORT</Eyebrow><h2>Specialist teams. A shared purpose.</h2></div><p>Unit names, roles and assignments are part of the air force and its community.</p></div></section>
+    <PageHero eyebrow="HOW WE ARE ORGANIZED" title="Command, wings and units." intro="The command hierarchy connects headquarters, operational formations, training and specialist support." variant="helicopter"/>
+    <section className="content-section"><SectionTitle eyebrow="AIR FORCE STRUCTURE" title="Force formations" text="Command and operational formations listed in the organization register."/><div className="org-chart"><div className="org-root"><Landmark size={20}/><span>Belgian Air Force Headquarters</span><small>Command · coordination · administration</small></div><div className="org-connector"/><div className="org-branches">{data.organizationStructure.wings.map((formation)=><article className="org-branch" key={formation.id}><span className="org-mark"><Building2 size={18}/></span><div><Eyebrow>FORMATION</Eyebrow><h3>{formation.title}</h3><p>{formation.description}</p></div></article>)}</div></div><div className="squadron-section"><SectionTitle eyebrow="SQUADRONS & SPECIALIST UNITS" title="Roles, equipment and stations" text="Unit-level assignments as listed in the force structure."/><div className="squadron-grid">{data.organizationStructure.squadronRoles.map((unit)=><article className="squadron-card" key={unit.id}><span><Radio size={17}/></span><h3>{unit.title}</h3><p>{unit.description}</p><dl><div><dt>Role</dt><dd>{unit.role}</dd></div><div><dt>Equipment</dt><dd>{unit.equipment}</dd></div><div><dt>Station</dt><dd>{unit.station}</dd></div></dl></article>)}</div></div></section>
+    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="HEADQUARTERS & CONTROL" title="Command and enabling units" text="Specialist offices and control functions support force operations."/><div className="unit-table-wrap"><table className="unit-table"><thead><tr><th>Unit</th><th>Role</th><th>Station</th></tr></thead><tbody>{data.organizationStructure.supportUnits.map((item)=><tr key={item.unit}><th scope="row">{item.unit}</th><td>{item.role}</td><td>{item.station}</td></tr>)}</tbody></table></div></div></section>
+    <section className="content-section"><SectionTitle eyebrow="FUNCTIONAL ORGANIZATION" title="Core areas" text="The force's operational and enabling responsibilities."/><div className="org-role-grid">{data.organization.map((item)=><InfoCard key={item.id} icon={iconFor(item.icon)} title={item.title} text={item.description}/>)}</div></section>
   </>;
 }
 
 function Missions({ data }) {
   return <>
-    <PageHero eyebrow="AIR FORCE ACTIVITY" title="Practice, coordinate, explore." intro="Members fly, train together and take part in community events." variant="fighter" />
-    <section className="content-section"><SectionTitle eyebrow="ACTIVITIES" title="A broad range of flying" text="Explore the activities and capabilities of the air force." /><div className="mission-cards">{[{icon:Shield,title:"Air-defence flying",text:"Practise interception and airspace-awareness scenarios in flights."},{icon:Users,title:"Joint community events",text:"Coordinate flights and training with partner communities under agreed event rules."},{icon:Plane,title:"Air mobility",text:"Build planning and crew-coordination skills through passenger and cargo flights."},{icon:Radio,title:"Unmanned aviation",text:"Take part in reconnaissance-themed and remotely piloted aircraft activities."},{icon:Award,title:"Training and development",text:"Use instruction, practice and mentoring to help members improve their flying skills."},{icon:Wrench,title:"Specialist support",text:"Support the force through communications, weather, safety, technology and organizational projects."}].map(item=><InfoCard key={item.title} icon={item.icon} title={item.title} text={item.text}/>)}</div></section>
-    <section className="mission-band"><div><Eyebrow>COMMUNITY STANDARDS</Eyebrow><h2>Keep every flight responsible.</h2><p>Members contribute respectfully and work together to make the air force welcoming.</p><LinkButton href="#organization">See the force structure</LinkButton></div><span className="mission-band-seal"><Shield size={68}/></span></section>
+    <PageHero eyebrow="MISSION, VISION & FUNCTIONS" title="Airpower in service of Belgium." intro={data.force?.mission} variant="fighter"/>
+    <section className="content-section"><SectionTitle eyebrow="OUR FUNCTIONS" title="Core mission areas" text={data.force?.vision}/><div className="mission-cards">{data.force?.functions?.map((item,index)=><InfoCard key={item.title} icon={[Shield,Plane,Radio,Award,Compass][index]} title={item.title} text={item.description}/>)}</div></section>
+    <section className="mission-band"><div><Eyebrow>OPERATIONAL PRIORITIES</Eyebrow><h2>Readiness, cooperation, responsibility.</h2><p>Maintain a high state of readiness, respond to emerging needs and contribute to collective security.</p><LinkButton href="#organization">See the force structure</LinkButton></div><span className="mission-band-seal"><Shield size={68}/></span></section>
   </>;
 }
 
 function AircraftPage({ aircraft, filter, onFilter }) {
   return <>
-    <PageHero eyebrow="AIRCRAFT" title="Aircraft in the force." intro="Browse the aircraft roster and explore the capabilities of each type." variant="transport" />
-    <section className="content-section"><SectionTitle eyebrow="AIRCRAFT DIRECTORY" title="A roster for flying" text="Explore the aircraft that serve in the air force and their general roles." /><div className="filter-row" aria-label="Filter aircraft by category">{aircraftGroups.map((item)=><button className={filter===item?"selected":""} onClick={()=>onFilter(item)} key={item}>{item}</button>)}</div><div className="fleet-grid">{aircraft.map((item,index)=><AircraftCard item={item} index={index} key={item.id}/>)}</div></section>
+    <PageHero eyebrow="AIRCRAFT" title="Aircraft in the force." intro="Browse the aircraft inventory, variants and published service status." variant="transport" />
+    <section className="content-section"><SectionTitle eyebrow="AIRCRAFT DIRECTORY" title="Fleet inventory" text="Types, operational roles and reported inventory status."/><div className="filter-row" aria-label="Filter aircraft by category">{aircraftGroups.map((item)=><button className={filter===item?"selected":""} onClick={()=>onFilter(item)} key={item}>{item}</button>)}</div><div className="fleet-grid">{aircraft.map((item,index)=><AircraftCard item={item} index={index} key={item.id}/>)}</div></section>
   </>;
 }
 
@@ -213,14 +218,14 @@ function Bases({ data, selectedId }) {
   const selectedBase = data.bases.find((base) => base.id === selectedId);
   return <>
     <PageHero eyebrow="BASES & STATIONS" title="Places across the force." intro="Explore the airfields and coordination locations that support the air force." variant="transport" />
-    <section className="content-section"><SectionTitle eyebrow="INSTALLATION DIRECTORY" title="A connected network" text="Explore the airfields and locations listed across the force order of battle." /><div className="base-layout"><div className="location-map-panel"><LocationMap bases={data.bases} selectedId={selectedId}/><div className="map-overseas"><span>OVERSEAS LOCATION</span><a href="#bases/luke-afb" className={selectedId==="luke-afb"?"map-overseas-selected":""}><i/><span>Luke AFB (AZ)<small>Arizona, United States · Select to locate on map</small></span><ArrowUpRight size={14}/></a></div></div><div className="base-list">{data.bases.map((base,index)=><article id={`base-${base.id}`} className={`base-item ${base.id===selectedId?"base-selected":""}`} key={base.id}><span className="base-number">0{index+1}</span><div><Eyebrow>{base.region}</Eyebrow><h3>{base.name}</h3><p>{base.description}</p><span className="base-role">{base.role}</span></div></article>)}</div></div>{selectedBase&&<div className="base-selected-panel"><Eyebrow>AIR FORCE LOCATION</Eyebrow><h3>{selectedBase.name}</h3><p>{selectedBase.description}</p><span>{selectedBase.role} · {selectedBase.region}</span><a href="#bases">Return to all locations <ArrowRight size={13}/></a></div>}</section>
+    <section className="content-section"><SectionTitle eyebrow="INSTALLATION DIRECTORY" title="Bases, airfields and control locations" text="Mapped locations and their publicly listed units."/><div className="base-layout"><div className="location-map-panel"><LocationMap bases={data.bases} selectedId={selectedId}/><div className="map-overseas"><span>OVERSEAS LOCATION</span><a href="#bases/luke-afb" className={selectedId==="luke-afb"?"map-overseas-selected":""}><i/><span>Luke AFB (AZ)<small>Arizona, United States · Select to locate on map</small></span><ArrowUpRight size={14}/></a></div></div><div className="base-list">{data.bases.map((base,index)=><article id={`base-${base.id}`} className={`base-item ${base.id===selectedId?"base-selected":""}`} key={base.id}><span className="base-number">{String(index+1).padStart(2,"0")}</span><div><Eyebrow>{base.region}</Eyebrow><h3>{base.name}</h3><p>{base.description}</p><span className="base-role">{base.role}</span>{base.units?.length>0&&<ul className="base-units">{base.units.map((unit)=><li key={unit}>{unit}</li>)}</ul>}</div></article>)}</div></div>{selectedBase&&<div className="base-selected-panel"><Eyebrow>AIR FORCE LOCATION</Eyebrow><h3>{selectedBase.name}</h3><p>{selectedBase.description}</p><span>{selectedBase.role} · {selectedBase.region}</span>{selectedBase.units?.length>0&&<p><strong>Units:</strong> {selectedBase.units.join(", ")}</p>}<a href="#bases">Return to all locations <ArrowRight size={13}/></a></div>}</section>
   </>;
 }
 
 function NewsPage({ news, category, onCategory }) {
   return <>
-    <PageHero eyebrow="NEWS" title="Stories from the force." intro="Updates and features about the group's history, flying and community projects." variant="fighter"/>
-    <section className="content-section"><SectionTitle eyebrow="UPDATES & FEATURES" title="Notes from the community" text="Browse updates and features by topic."/><div className="filter-row" aria-label="Filter news by topic">{newsGroups.map((item)=><button className={category===item?"selected":""} onClick={()=>onCategory(item)} key={item}>{item}</button>)}</div><div className="news-grid news-archive">{news.map((item,index)=><NewsCard item={item} key={item.id} index={index}/>)}</div>{news.length===0&&<p className="empty-state">There are no items in this category at present.</p>}</section>
+    <PageHero eyebrow="NEWS & HISTORY" title="Stories from the force." intro="Updates on milestones, capability development, operations and international engagement." variant="fighter"/>
+    <section className="content-section"><SectionTitle eyebrow="UPDATES & FEATURES" title="Force news" text="Browse dated records by topic."/><div className="filter-row" aria-label="Filter news by topic">{newsGroups.map((item)=><button className={category===item?"selected":""} onClick={()=>onCategory(item)} key={item}>{item}</button>)}</div><div className="news-grid news-archive">{news.map((item,index)=><NewsCard item={item} key={item.id} index={index}/>)}</div>{news.length===0&&<p className="empty-state">There are no items in this category at present.</p>}</section>
   </>;
 }
 
@@ -230,22 +235,21 @@ function NewsCard({ item, index = 0 }) {
 
 function NewsDetail({ item }) {
   if (!item) return <NotFound />;
-  return <><div className="detail-top"><a href="#news"><ArrowLeft size={15}/> Community news</a><span>{item.category}</span></div><PageHero eyebrow={`${item.category.toUpperCase()} · ${dateLabel(item.date).toUpperCase()}`} title={item.title} intro={item.excerpt} variant="transport"/><article className="content-section article-body"><Eyebrow>COMMUNITY UPDATE</Eyebrow><p>{item.body}</p><LinkButton href="#news" quiet>Return to community news</LinkButton></article></>;
+  return <><div className="detail-top"><a href="#news"><ArrowLeft size={15}/> Force news</a><span>{item.category}</span></div><PageHero eyebrow={`${item.category.toUpperCase()} · ${dateLabel(item.date).toUpperCase()}`} title={item.title} intro={item.excerpt} variant="transport"/><article className="content-section article-body"><Eyebrow>FORCE UPDATE</Eyebrow><p>{item.body}</p><LinkButton href="#news" quiet>Return to force news</LinkButton></article></>;
 }
 
-function Recruitment() {
+function Recruitment({ profile }) {
   const professions = [
-    ["pilots", "Take part in planned flights, training sessions and community events."],
-    ["Training & standards", "Support other members with practice sessions, shared procedures and welcoming instruction."],
-    ["Organization & events", "Help coordinate units, events, schedules and public information."],
-    ["Creative & technical support", "Contribute artwork, web content, technology projects or other community services."]
+    ["Aircrew", "Serve in fighter, transport, helicopter, training and unmanned aviation roles."],
+    ["Training & standards", "Develop personnel through instruction, conversion training and professional development."],
+    ["Command & support", "Contribute to airspace control, safety, meteorology, security and administration."],
+    ["Technology & development", "Support systems, operational information, communications and technical innovation."]
   ];
   return <>
-    <PageHero eyebrow="JOIN THE AIR FORCE" title="Bring your skills to the community." intro="The group welcomes a range of interests beyond flying, from training and event organization to creative and technical contributions." variant="helicopter" />
-    <section className="content-section"><SectionTitle eyebrow="WAYS TO CONTRIBUTE" title="Many ways to serve" text="Explore the roles that help the air force thrive."/><div className="career-grid">{professions.map(([title,text],index)=><article className="career-card" key={title}><span className="career-index">0{index+1}</span><BriefcaseBusiness size={22}/><h3>{title}</h3><p>{text}</p></article>)}</div></section>
-    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="GETTING STARTED" title="Learn, fly, contribute" text="New members can learn about the force, review its conventions and take part at a suitable pace."/><div className="pipeline">{["Learn about the group","Review community rules","Choose an area of interest","Meet the community","Take part in an activity"].map((step,index)=><article key={step}><span>0{index+1}</span><i/><h3>{step}</h3></article>)}</div></div></section>
-    <section className="content-section recruitment-note"><Shield size={22}/><div><Eyebrow>AIR FORCE</Eyebrow><h2>Join a community built around aviation.</h2><p>Discover opportunities to fly, learn, organize and support the force.</p></div></section>
-    <Callout href="#contact" kicker="COMMUNITY ENQUIRY" title="Ask about taking part." text="Contact details and the message form are placeholders and are not monitored." action="View contact information"/>
+    <PageHero eyebrow="RECRUITMENT" title="Serve with the Belgian Air Force." intro="Explore aircrew, training, command, technology and specialist-support opportunities." variant="helicopter" />
+    <section className="content-section"><SectionTitle eyebrow="CAREER AREAS" title="Opportunities across the force" text="Contact the Recruitment Office for current roles and application requirements."/><div className="career-grid">{professions.map(([title,text],index)=><article className="career-card" key={title}><span className="career-index">0{index+1}</span><BriefcaseBusiness size={22}/><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="CONTACT RECRUITMENT" title="Enlist now" text="For application information, contact the Recruitment Office directly."/>{profile?.recruitmentEmail?<a className="recruitment-email" href={`mailto:${profile.recruitmentEmail}`}>{profile.recruitmentEmail}<ArrowUpRight size={15}/></a>:<p role="status">Recruitment contact details are unavailable.</p>}{profile?.website&&<p className="site-link-note">Force website: <a href={profile.website} target="_blank" rel="noreferrer">{profile.website}</a></p>}</div></section>
+    <section className="content-section recruitment-note"><Shield size={22}/><div><Eyebrow>RECRUITMENT OFFICE</Eyebrow><h2>Questions about joining?</h2><p>{profile?.recruitmentEmail?<>Contact the recruitment team at <a href={`mailto:${profile.recruitmentEmail}`}>{profile.recruitmentEmail}</a>.</>:"Recruitment contact details are unavailable."}</p></div></section>
   </>;
 }
 
@@ -255,20 +259,20 @@ function Media({ aircraft }) {
     ...aircraft.map((item) => ({ ...aircraftImages[item.id], title: item.name, caption: `${item.category} aircraft · ${aircraftImages[item.id]?.license ?? ""}`, variant: item.image }))
   ];
   return <>
-    <PageHero eyebrow="MEDIA CENTRE" title="A closer look at the community." intro="Explore artwork and imagery from the Belgian Air Force." variant="helicopter"/>
-    <section className="content-section"><SectionTitle eyebrow="IMAGE GALLERY" title="Aircraft & insignia" text="Browse the aircraft roster and community artwork."/><div className="media-grid">{gallery.map((item,index)=><article className={`media-card ${index===3?"media-card-insignia":""}`} key={item.src}><div className={`media-art media-photo media-art-${index%3}`}>{item.source ? <ImageWithFallback src={item.src} alt={item.alt} variant={item.variant} className="gallery-image" fallbackClassName="gallery-image-fallback"/> : <img src={item.src} alt={item.alt} loading="lazy" decoding="async" />}</div><div><Eyebrow>{item.caption}</Eyebrow><h3>{item.title}</h3>{item.source ? <a className="image-attribution" href={item.source} target="_blank" rel="noreferrer">Photo: {item.credit} · {item.license}</a> : item.credit && <span className="image-attribution">{item.credit} · {item.license}</span>}</div></article>)}</div></section>
-    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="VIDEO GALLERY" title="Stories on screen" text="Video embeds can be added with captions and transcripts."/><div className="video-grid">{["A formation flight","A training session","Inside the community's support teams"].map((title,index)=><article className="video-card" key={title}><div className={`video-placeholder video-${index}`}><CirclePlay size={43}/><span>VIDEO PLACEHOLDER</span></div><h3>{title}</h3><p>Caption and transcript to be added with each approved community video.</p></article>)}</div></div></section>
+    <PageHero eyebrow="MEDIA CENTRE" title="Belgian Air Force in images." intro="Explore aircraft, insignia, recruitment material and official-flight imagery." variant="helicopter"/>
+    <section className="content-section"><SectionTitle eyebrow="IMAGE GALLERY" title="Aircraft & insignia" text="Browse aircraft photographs and force imagery."/><div className="media-grid">{gallery.map((item,index)=><article className={`media-card ${index===3?"media-card-insignia":""}`} key={item.src}><div className={`media-art media-photo media-art-${index%3}`}>{item.source ? <ImageWithFallback src={item.src} alt={item.alt} variant={item.variant} className="gallery-image" fallbackClassName="gallery-image-fallback"/> : <img src={item.src} alt={item.alt} loading="lazy" decoding="async" />}</div><div><Eyebrow>{item.caption}</Eyebrow><h3>{item.title}</h3>{item.source ? <a className="image-attribution" href={item.source} target="_blank" rel="noreferrer">Photo: {item.credit} · {item.license}</a> : item.credit && <span className="image-attribution">{item.credit} · {item.license}</span>}</div></article>)}</div></section>
+    <section className="soft-section"><div className="section-wrap"><SectionTitle eyebrow="VIDEO GALLERY" title="Stories on screen" text="Video embeds can be added with captions and transcripts."/><div className="video-grid">{["A formation flight","A training session","Inside force support units"].map((title,index)=><article className="video-card" key={title}><div className={`video-placeholder video-${index}`}><CirclePlay size={43}/><span>VIDEO PLACEHOLDER</span></div><h3>{title}</h3><p>Captions and transcripts should accompany approved videos.</p></article>)}</div></div></section>
     <section className="content-section downloads"><div><Eyebrow>DOWNLOADS</Eyebrow><h2>Public media resources</h2><p>Wallpaper and media packs may be added following approval and rights checks.</p></div><a href="#media" aria-disabled="true" onClick={(event)=>event.preventDefault()} className="download-placeholder"><span><Award size={21}/><b>Wallpaper collection</b><small>PLACEHOLDER · NOT AVAILABLE</small></span><ArrowDown size={16}/></a></section>
   </>;
 }
 
-function Contact({ onSubmit, message }) {
+function Contact({ onSubmit, message, profile }) {
   return <>
-    <PageHero eyebrow="CONTACT THE COMMUNITY" title="How can we help?" intro="Contact the community for information about the Belgian Air Force." variant="transport"/>
-    <section className="content-section contact-layout"><div className="contact-copy"><Eyebrow>COMMUNITY LIAISON</Eyebrow><h2>Clear information.<br/>Responsible communication.</h2><p>Community administrators can provide information about the force, its public material and participation.</p><div className="contact-block"><span><Mail size={18}/></span><div><Eyebrow>GENERAL ENQUIRIES</Eyebrow><b>Community contact to be confirmed</b><small>Placeholder · not a monitored address</small></div></div><div className="contact-block"><span><Headphones size={18}/></span><div><Eyebrow>MEDIA ENQUIRIES</Eyebrow><b>Media contact to be confirmed</b><small>Placeholder · not a monitored address</small></div></div></div>
+    <PageHero eyebrow="CONTACT" title="Contact the Recruitment Office." intro="For public contact, recruitment information and application enquiries." variant="transport"/>
+    <section className="content-section contact-layout"><div className="contact-copy"><Eyebrow>RECRUITMENT OFFICE</Eyebrow><h2>Information and enlistment.</h2><p>Contact the Belgian Air Force Recruitment Office using the published address.</p><div className="contact-block"><span><Mail size={18}/></span><div><Eyebrow>RECRUITMENT ENQUIRIES</Eyebrow>{profile?.recruitmentEmail?<a href={`mailto:${profile.recruitmentEmail}`}><b>{profile.recruitmentEmail}</b></a>:<b>Contact details unavailable</b>}</div></div><div className="contact-block"><span><Landmark size={18}/></span><div><Eyebrow>HEADQUARTERS</Eyebrow><b>{profile?.headquarters??"Force profile unavailable"}</b></div></div>{profile?.website&&<div className="contact-block"><span><ArrowUpRight size={18}/></span><div><Eyebrow>WEBSITE</Eyebrow><a href={profile.website} target="_blank" rel="noreferrer"><b>{profile.website}</b></a></div></div>}</div>
       <form className="contact-form" onSubmit={onSubmit}><Eyebrow>CONTACT FORM</Eyebrow><h2>Preview a message</h2><p>This form is not connected and will not transmit personal information.</p><label>Your name<input name="name" autoComplete="name" required/></label><label>Email address<input name="email" type="email" autoComplete="email" required/></label><label>Subject<select name="subject" defaultValue=""><option value="" disabled>Select a topic</option><option>Force information</option><option>Media enquiry</option><option>Website feedback</option></select></label><label>Message<textarea name="message" rows="4" required/></label><button className="solid-button" type="submit">Preview message <ArrowRight size={15}/></button>{message&&<p className="form-message" role="status">{message}</p>}</form>
     </section>
-    <div className="editorial-note contact-caveat"><Shield size={17}/><p>This demonstration form does not transmit or store messages.</p></div>
+    <div className="editorial-note contact-caveat"><Shield size={17}/><p>This preview form does not transmit or store messages. Please use the published Recruitment Office email for genuine enquiries.</p></div>
   </>;
 }
 
@@ -288,19 +292,19 @@ function NotFound() {
   return <section className="not-found"><Eyebrow>PAGE NOT FOUND</Eyebrow><h1>That page isn't here.</h1><p>Return to the public information homepage to continue browsing.</p><LinkButton href="#home">Go to homepage</LinkButton></section>;
 }
 
-function PolicyPage({ kind }) {
+function PolicyPage({ kind, data }) {
   const content = {
     accessibility: ["Accessibility", "Designed for clear, inclusive access.", "This website concept supports keyboard navigation, semantic headings, visible focus states, reduced reliance on colour alone and responsive layouts. Placeholder illustrations include accessible text descriptions. Before launch, test the final implementation against applicable accessibility requirements with assistive technologies and users."],
     privacy: ["Privacy notice", "Respect for your information.", "This demonstration site does not include analytics, advertising trackers or a functioning contact submission service. The mock contact form does not transmit data. A production website must publish a reviewed privacy notice that explains its actual data processing, retention and contact arrangements."],
-    legal: ["Legal information", "About the Belgian Air Force.", "This website presents the Belgian Air Force and its organization, aircraft, ranks, units, missions and locations."]
+    legal: ["Legal information", "About the Belgian Air Force.", `This website presents the Belgian Air Force and its organization, aircraft, ranks, units, missions and locations. ${data.force?.publicationNotice ?? ""} ${data.force?.rightsNotice ?? ""}`]
   }[kind];
   return <><PageHero eyebrow="SITE INFORMATION" title={content[0]} intro={content[1]} variant="transport"/><section className="content-section policy-copy"><Eyebrow>PUBLIC WEBSITE INFORMATION</Eyebrow><h2>{content[1]}</h2><p>{content[2]}</p><LinkButton href="#home" quiet>Return home</LinkButton></section></>;
 }
 
 function Footer() {
-  return <footer className="site-footer">  <div className="footer-main"><div className="footer-brand"><a className="identity" href="#home"><span className="identity-mark"><img src={belgianRoundel} alt="" /></span><span><strong>BELGIAN AIR FORCE</strong></span></a><p>Flight, teamwork and community.<br/>An air force built together.</p><div className="social-links" aria-label="Social media placeholders"><a href="#contact" aria-label="Social media placeholder"><Facebook size={16}/></a><a href="#contact" aria-label="Social media placeholder"><Instagram size={16}/></a></div></div>
+  return <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><a className="identity" href="#home"><span className="identity-mark"><img src={belgianRoundel} alt="" /></span><span><strong>BELGIAN AIR FORCE</strong></span></a><p>Safeguarding airspace.<br/>Supporting national and allied operations.</p></div>
       <div className="footer-column"><Eyebrow>EXPLORE</Eyebrow><a href="#about">About</a><a href="#organization">Organization</a><a href="#aircraft">Aircraft</a><a href="#bases">Bases</a></div>
-      <div className="footer-column"><Eyebrow>INFORMATION</Eyebrow><a href="#news">Community news</a><a href="#recruitment">Join the force</a><a href="#media">Media</a><a href="#contact">Contact</a></div>
-      <div className="footer-column"><Eyebrow>LEGAL & ACCESS</Eyebrow><a href="#accessibility">Accessibility</a><a href="#privacy">Privacy notice</a><a href="#legal">Legal information</a><a href="#contact">Website feedback</a></div>
-    </div><div className="footer-bottom"><span>© Belgian Air Force</span><span>Flight · Teamwork · Community</span><a href="#home">Back to top ↑</a></div></footer>;
+      <div className="footer-column"><Eyebrow>INFORMATION</Eyebrow><a href="#news">Force news</a><a href="#recruitment">Recruitment</a><a href="#media">Media</a><a href="#contact">Contact</a></div>
+      <div className="footer-column"><Eyebrow>LEGAL & ACCESS</Eyebrow><a href="#accessibility">Accessibility</a><a href="#privacy">Privacy notice</a><a href="#legal">Legal information</a><a href="https://r3xicodes.github.io/baf.be/" target="_blank" rel="noreferrer">Force website</a></div>
+    </div><div className="footer-bottom"><span>© Belgian Air Force</span><span>Belgian Air Force public information</span><a href="#home">Back to top ↑</a></div></footer>;
 }

@@ -7,6 +7,14 @@ export const aircraftImages = {
     source: "https://commons.wikimedia.org/wiki/File:Belgian_Air_Force_General_Dynamics_F-16BM_Fighting_Falcon_FB-24_Royal_International_Air_Tattoo_2025_01.jpg",
     licenseUrl: "https://creativecommons.org/licenses/by/4.0/"
   },
+  "f-16b": {
+    src: "/media/aircraft/f-16a.jpg",
+    alt: "Belgian Air Force two-seat F-16BM displayed at an air show",
+    credit: "Julian Herzog",
+    license: "CC BY 4.0",
+    source: "https://commons.wikimedia.org/wiki/File:Belgian_Air_Force_General_Dynamics_F-16BM_Fighting_Falcon_FB-24_Royal_International_Air_Tattoo_2025_01.jpg",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/"
+  },
   "f-35a": {
     src: "/media/aircraft/f-35a.jpg",
     alt: "F-35 Lightning II performing at an air show",

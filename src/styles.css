@@ -152,6 +152,8 @@ button { color: inherit; }
 .timeline-item>i { display:block;width:100%;height:1px;margin:13px 0;background:#c7c1b1;position:relative; }
 .timeline-item>i:before { content:"";position:absolute;top:-4px;left:0;width:8px;height:8px;background:#aa884c;border-radius:50%; }
 .timeline-item p { max-width:220px;color:#5e6970;font-size:10px;line-height:1.8; }
+.timeline-item h3 { margin:5px 0;color:var(--ink);font:600 15px var(--serif); }
+.recognition-list { display:flex;flex-wrap:wrap;gap:10px;margin-top:22px; }.recognition-list span{padding:9px 12px;color:#4f5d64;background:#fff;border:1px solid #e3dfd3;font-size:10px}
 .values-section { padding-top:76px;padding-bottom:84px; }
 .values-grid { display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #dedbd2;border-bottom:1px solid #dedbd2; }
 .value-card { min-height:156px;padding:17px;border-right:1px solid #dedbd2; }.value-card:first-child{padding-left:0}.value-card:last-child{border:0}
@@ -185,6 +187,8 @@ button { color: inherit; }
 .squadron-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:10px; }
 .squadron-card { min-height:126px;padding:15px;background:white;border:1px solid #e1ded5; }
 .squadron-card>span { color:#9b7940; }.squadron-card h3{margin:8px 0 5px;color:var(--ink);font:600 16px var(--serif)}.squadron-card p{margin:0;color:#647078;font-size:9px;line-height:1.65}
+.squadron-card dl { display:grid;gap:5px;margin:12px 0 0;padding-top:10px;border-top:1px solid #ece9e1;font-size:9px;line-height:1.5; }.squadron-card dl div{display:grid;grid-template-columns:68px 1fr;gap:7px}.squadron-card dt{color:#7a817f}.squadron-card dd{margin:0;color:#344650;font-weight:600}
+.unit-table-wrap { overflow-x:auto;border:1px solid #e1ded5;background:#fff; }.unit-table{width:100%;border-collapse:collapse;text-align:left;font-size:10px}.unit-table th,.unit-table td{padding:12px 14px;border-bottom:1px solid #ece9e1}.unit-table thead{color:#f6f3ec;background:#162c40}.unit-table thead th{font-size:9px;letter-spacing:.08em;text-transform:uppercase}.unit-table tbody th{color:#223744;font-weight:600}.unit-table tbody td{color:#647078}.unit-table tbody tr:last-child th,.unit-table tbody tr:last-child td{border-bottom:0}
 .org-role-grid,.mission-cards { display:grid;grid-template-columns:repeat(3,1fr);gap:12px; }
 .org-callout { display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:30px;padding:24px 28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line); }
 .org-callout h2 { margin:8px 0 0;color:var(--ink);font:600 27px var(--serif); }.org-callout p{color:#626e75;font-size:11px;line-height:1.8}
@@ -242,6 +246,7 @@ button { color: inherit; }
 .pipeline h3{max-width:140px;color:var(--ink);font:600 15px var(--serif)}
 .recruitment-note { display:grid;grid-template-columns:32px 1fr;gap:15px;align-items:start; }.recruitment-note>svg{color:#97763c}.recruitment-note h2{margin:5px 0;color:var(--ink);font:600 25px var(--serif)}
 .recruitment-note p{max-width:780px;margin:8px 0;color:#5f6c73;font-size:11px;line-height:1.8}
+.recruitment-email { display:inline-flex;align-items:center;gap:10px;margin:8px 0;padding:14px 18px;color:white;background:#172b3f;text-decoration:none;font-size:13px;font-weight:600; }.recruitment-email:hover{background:#263d53}.site-link-note{color:#5f6c73;font-size:11px}.site-link-note a{color:#72572c}.base-units{display:flex;flex-wrap:wrap;gap:4px;margin:9px 0 0;padding:0;list-style:none}.base-units li{padding:4px 6px;color:#485961;background:#f1f0eb;font-size:8px}
 .media-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }.media-card{background:#fff;border:1px solid #e2dfd6}
 .media-art { height:190px; overflow:hidden; }.media-art svg{width:78%}.media-art-1{filter:saturate(.7)}.media-art-2{filter:sepia(.2)}
 .media-photo { display:grid;place-items:center;background:#172b3e; }.media-photo img { width:100%;height:100%;object-fit:cover;object-position:center; }.media-card:nth-child(2) .media-photo img{object-fit:contain}.media-card-insignia .media-photo { background:#f5f2e9; }.media-card-insignia .media-photo img { width:auto;max-width:65%;height:85%;object-fit:contain; }
@@ -303,12 +308,12 @@ button { color: inherit; }
   .page-hero{min-height:260px}.page-hero-art,.page-hero-photo{width:100%;opacity:.72}.page-hero .art svg{width:75%;right:0;top:25%}.page-hero-shade{background:linear-gradient(90deg,#0b1725f0,#0b1725a3 68%,#14253569),linear-gradient(0deg,#0b172564,transparent)}
   .page-hero-content{width:89%;padding:37px 0}.page-hero h1{font-size:38px}.page-hero-content>p{max-width:430px;font-size:11px}
   .editorial{grid-template-columns:1fr;gap:21px}.big-year{margin-top:10px;font-size:49px}.big-year small{display:inline-block;margin-left:9px}
-  .timeline-section,.soft-section{padding:51px 0}.timeline{grid-template-columns:1fr;gap:10px;margin-top:20px}.timeline-item{display:grid;grid-template-columns:55px 15px 1fr;align-items:start;gap:8px;padding:0}
+  .timeline-section,.soft-section{padding:51px 0}.timeline{grid-template-columns:1fr;gap:10px;margin-top:20px}.timeline-item{display:grid;grid-template-columns:105px 15px 1fr;align-items:start;gap:8px;padding:0}
   .timeline-item>span{font-size:15px}.timeline-item>i{width:1px;height:100%;min-height:50px;margin:0 7px}.timeline-item>i:before{left:-3px;top:1px}.timeline-item p{margin:0 0 10px;max-width:none}
   .values-grid{grid-template-columns:1fr 1fr}.value-card{min-height:135px;padding:14px;border-bottom:1px solid #dedbd2}.value-card:nth-child(2){border-right:0}.value-card:nth-child(3){padding-left:0;border-bottom:0}.value-card:last-child{border-bottom:0}
   .leader-card{display:grid;grid-template-columns:.72fr 1.28fr}.leader-portrait{height:100%;min-height:230px}.leader-info{padding:13px}.leader-info p{font-size:9px}
   .org-chart{padding:20px 12px}.org-root{width:100%;padding:12px}.org-root span{font-size:14px}.org-branches{grid-template-columns:1fr 1fr;gap:8px}.org-branches:before{display:none}.org-branch{min-height:122px;padding:12px 8px;gap:7px}.org-branch:before{display:none}.org-branch h3{font-size:13px}
-  .squadron-section{margin-top:34px}.squadron-section .section-title h2{font-size:26px}.squadron-grid{grid-template-columns:1fr}
+  .squadron-section{margin-top:34px}.squadron-section .section-title h2{font-size:26px}.squadron-grid{grid-template-columns:1fr}.unit-table{min-width:540px}
   .org-callout{grid-template-columns:1fr;gap:8px;padding:18px 0}.org-callout h2{font-size:24px}
   .mission-band{padding:39px 5.5%}.mission-band h2{font-size:29px}.mission-band-seal{display:none}
   .filter-row{gap:6px}.filter-row button{min-height:32px;padding:0 9px;font-size:9px}

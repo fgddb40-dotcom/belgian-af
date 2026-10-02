@@ -1,6 +1,6 @@
 # Belgian Air Force
 
-A responsive public website presenting the Belgian Air Force's history, leadership, organization, aircraft, locations, community updates and media.
+A responsive public information website presenting the Belgian Air Force's history, command structure, missions, aircraft inventory, bases, international relationships and media. The public site includes an independent-publication notice in its legal information.
 
 ## Run locally
 
@@ -25,7 +25,7 @@ npm start
 
 ```text
 server/
-  data.js          Public content for aircraft, bases, leadership and news
+  data.js          Public force profile, aircraft inventory, bases, command structure and news
   index.js         Express API and production static hosting
   index.test.js    API catalogue and content tests
   start.js         Production-mode entry point
@@ -50,15 +50,16 @@ The read-only API serves content from `server/data.js`.
 
 | Endpoint | Description |
 | --- | --- |
-| `GET /api/news` | Community updates |
+| `GET /api/news` | Force history, development and international-affairs updates |
 | `GET /api/news/:id` | One update |
 | `GET /api/aircraft` | Aircraft roster |
 | `GET /api/aircraft/:id` | One aircraft profile |
 | `GET /api/bases` | Location directory |
 | `GET /api/leadership` | Public leadership roster |
 | `GET /api/organization` | Force functions |
-| `GET /api/organization/structure` | Wings and specialist units |
-| `GET /api/values` | Community values |
+| `GET /api/organization/structure` | Command staff, wings, squadrons and support units |
+| `GET /api/force` | Mission, vision, history, international affairs, technology and recruitment information |
+| `GET /api/values` | Public values |
 | `GET /api/health` | Service health |
 
 Example:
@@ -67,7 +68,7 @@ Example:
 curl http://localhost:3001/api/aircraft
 ```
 
-The contact form is a non-functional preview and does not transmit or store messages. Replace placeholder contact details and media only with approved content.
+The contact form is a non-functional preview and does not transmit or store messages. Recruitment enquiries use the published Recruitment Office email address in the force profile.
 
 ## Deployment
 

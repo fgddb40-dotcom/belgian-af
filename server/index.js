@@ -1,7 +1,7 @@
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { aircraft, bases, leadership, news, organisation, organizationStructure, values } from "./data.js";
+import { aircraft, bases, forceProfile, leadership, news, organisation, organizationStructure, values } from "./data.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 3001;
@@ -38,6 +38,7 @@ app.get("/api/bases", (_req, res) => res.json(bases));
 app.get("/api/leadership", (_req, res) => res.json(leadership));
 app.get("/api/organization", (_req, res) => res.json(organisation));
 app.get("/api/organization/structure", (_req, res) => res.json(organizationStructure));
+app.get("/api/force", (_req, res) => res.json(forceProfile));
 app.get("/api/values", (_req, res) => res.json(values));
 
 app.use("/api", (_req, res) => res.status(404).json({ error: "API endpoint not found." }));
