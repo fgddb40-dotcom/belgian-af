@@ -1,9 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createServer } from "node:http";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import app from "../api/[...path].js";
+import organizationStructureHandler from "../api/organization/structure.js";
 import { aircraft, bases, leadership, news, organisation, organizationStructure, values } from "./data.js";
 import { aircraftImages } from "../src/aircraftImages.js";
 
@@ -76,4 +78,17 @@ test("the API app serves its endpoints when mounted as a serverless handler", as
   const structureResponse = await fetch(`http://127.0.0.1:${address.port}/api/organization/structure`);
   assert.equal(structureResponse.status, 200);
   assert.deepEqual(await structureResponse.json(), organizationStructure);
+});
+
+test("the Vercel nested organization endpoint responds with the structure catalogue", async (context) => {
+  const server = createServer(organizationStructureHandler);
+  context.after(() => new Promise((resolve, reject) => {
+    server.close((error) => error ? reject(error) : resolve());
+  }));
+  await new Promise((resolve) => server.listen(0, resolve));
+  const address = server.address();
+  assert.ok(address && typeof address === "object");
+  const response = await fetch(`http://127.0.0.1:${address.port}/api/organization/structure`);
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), organizationStructure);
 });
