@@ -68,7 +68,7 @@ Example:
 curl http://localhost:3001/api/aircraft
 ```
 
-The contact form is a non-functional preview and does not transmit or store messages. Recruitment enquiries use the published Recruitment Office email address in the force profile.
+The recruitment page embeds the Google Forms application form and also publishes the Recruitment Office email address. Google Forms is a third-party service and handles application submissions. The separate general contact form remains a non-functional preview and does not transmit or store messages.
 
 ## Deployment
 

@@ -247,6 +247,7 @@ button { color: inherit; }
 .recruitment-note { display:grid;grid-template-columns:32px 1fr;gap:15px;align-items:start; }.recruitment-note>svg{color:#97763c}.recruitment-note h2{margin:5px 0;color:var(--ink);font:600 25px var(--serif)}
 .recruitment-note p{max-width:780px;margin:8px 0;color:#5f6c73;font-size:11px;line-height:1.8}
 .recruitment-email { display:inline-flex;align-items:center;gap:10px;margin:8px 0;padding:14px 18px;color:white;background:#172b3f;text-decoration:none;font-size:13px;font-weight:600; }.recruitment-email:hover{background:#263d53}.site-link-note{color:#5f6c73;font-size:11px}.site-link-note a{color:#72572c}.base-units{display:flex;flex-wrap:wrap;gap:4px;margin:9px 0 0;padding:0;list-style:none}.base-units li{padding:4px 6px;color:#485961;background:#f1f0eb;font-size:8px}
+.recruitment-form-section { display:grid;justify-items:start; }.recruitment-form-section .section-title{width:100%}.recruitment-form{display:block;width:min(100%,640px);height:3278px;margin:8px auto 12px;border:0;background:#fff}
 .media-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }.media-card{background:#fff;border:1px solid #e2dfd6}
 .media-art { height:190px; overflow:hidden; }.media-art svg{width:78%}.media-art-1{filter:saturate(.7)}.media-art-2{filter:sepia(.2)}
 .media-photo { display:grid;place-items:center;background:#172b3e; }.media-photo img { width:100%;height:100%;object-fit:cover;object-position:center; }.media-card:nth-child(2) .media-photo img{object-fit:contain}.media-card-insignia .media-photo { background:#f5f2e9; }.media-card-insignia .media-photo img { width:auto;max-width:65%;height:85%;object-fit:contain; }
@@ -323,6 +324,7 @@ button { color: inherit; }
   .career-grid{grid-template-columns:1fr}.career-card{min-height:0;padding:18px}.career-card h3{font-size:18px}
   .pipeline{grid-template-columns:1fr;gap:3px;margin-top:15px}.pipeline article{display:grid;grid-template-columns:30px 18px 1fr;align-items:center;gap:7px}.pipeline article>i{width:1px;height:30px;margin:0 8px}.pipeline article>i:after{left:-3px;right:auto;bottom:0;top:auto}.pipeline h3{max-width:none;margin:8px 0;font-size:13px}
   .recruitment-note{grid-template-columns:25px 1fr;gap:10px}.recruitment-note h2{font-size:21px}
+  .recruitment-form{height:3278px}
   .media-art{height:195px}
   .downloads{align-items:flex-start;flex-direction:column}.download-placeholder{width:100%;min-width:0}
   .contact-layout{grid-template-columns:1fr;gap:30px}.contact-form{padding:18px}
