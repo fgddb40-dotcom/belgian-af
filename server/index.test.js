@@ -60,6 +60,13 @@ test("force aircraft inventory represents listed types and operational stations"
   }
 });
 
+test("Sioux flight public story records the supplied arrival details", () => {
+  const flight = news.find(({ id }) => id === "sioux-flight");
+  assert.ok(flight);
+  assert.match(flight.excerpt, /Sioux 01.*ERJ-145.*21:32Z/);
+  assert.match(flight.body, /Vienna International Airport \(LOWW\).*21:32Z/);
+});
+
 test("base map locations follow the supplied order of battle", () => {
   const BelgianLocations = ["beauvechain", "melsbroek", "florennes", "kleine-brogel", "koksijde", "weelde"];
   for (const id of BelgianLocations) {

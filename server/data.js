@@ -333,8 +333,8 @@ export const news = [
     category: "Operations",
     date: "2026-09-24",
     title: "Sioux flight arrives in Austria",
-    excerpt: "A VIP flight travelled from Brussels/Melsbroek to Vienna on 24 September 2026.",
-    body: "The Sioux flight departed Brussels/Melsbroek and crossed international airspace before entering European Republic airspace en route to Vienna. The flight concluded with the aircraft's arrival in Austria."
+    excerpt: "Sioux 01, an ERJ-145, landed in Vienna at 21:32Z on 24 September 2026.",
+    body: "The Belgian Air Force Sioux 01 flight operated an ERJ-145 from Brussels/Melsbroek to Vienna, Austria. The aircraft arrived at Vienna International Airport (LOWW) and landed at 21:32Z on 24 September 2026."
   }
 ];
 

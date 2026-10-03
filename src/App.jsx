@@ -16,7 +16,7 @@ const newsGroups = ["All", "Formation", "Leadership", "Development", "Foreign af
 const mediaGallery = [
   { src: heroPoster, title: "Hero1", caption: "Hero artwork · Air Force", alt: "F-16 aircraft artwork with Belgian Air Force branding" },
   { src: recruitmentPoster, title: "Belgian Air Force – 2026 Recruitment Poster", caption: "Recruitment · 2026", alt: "Belgian Air Force recruitment poster with aircraft artwork and a QR code" },
-  { src: viennaDiplomacy, title: "Sioux flight to Vienna", caption: "Official visit · 24 September 2026", alt: "transport flight poster showing a flight to Vienna, Austria" },
+  { src: viennaDiplomacy, title: "Sioux 01 flight to Vienna", caption: "ERJ-145 · Landed 24 September 2026 at 21:32Z", alt: "Belgian Air Force Sioux 01 ERJ-145 flight record showing its landing in Vienna, Austria" },
   { src: belgianRoundel, title: "Roundel of Belgium", caption: "Insignia · Reference artwork", alt: "Roundel of Belgium in black, yellow and red concentric circles" }
 ];
 const dateLabel = (value) => new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
@@ -235,7 +235,7 @@ function NewsCard({ item, index = 0 }) {
 
 function NewsDetail({ item }) {
   if (!item) return <NotFound />;
-  return <><div className="detail-top"><a href="#news"><ArrowLeft size={15}/> Force news</a><span>{item.category}</span></div><PageHero eyebrow={`${item.category.toUpperCase()} · ${dateLabel(item.date).toUpperCase()}`} title={item.title} intro={item.excerpt} variant="transport"/><article className="content-section article-body"><Eyebrow>FORCE UPDATE</Eyebrow><p>{item.body}</p><LinkButton href="#news" quiet>Return to force news</LinkButton></article></>;
+  return <><div className="detail-top"><a href="#news"><ArrowLeft size={15}/> Force news</a><span>{item.category}</span></div><PageHero eyebrow={`${item.category.toUpperCase()} · ${dateLabel(item.date).toUpperCase()}`} title={item.title} intro={item.excerpt} variant="transport"/><article className="content-section article-body"><Eyebrow>FORCE UPDATE</Eyebrow>{item.id==="sioux-flight"&&<figure className="sioux-flight-photo"><img src={viennaDiplomacy} alt="Belgian Air Force Sioux 01 ERJ-145 after landing at Vienna, Austria, on 24 September 2026"/><figcaption>Sioux 01 · ERJ-145 · Vienna, Austria (LOWW) · Landed 24 September 2026 at 21:32Z</figcaption></figure>}<p>{item.body}</p><LinkButton href="#news" quiet>Return to force news</LinkButton></article></>;
 }
 
 function Recruitment({ profile }) {

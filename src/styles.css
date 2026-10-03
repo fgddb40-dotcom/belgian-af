@@ -274,6 +274,7 @@ button { color: inherit; }
 .contact-caveat{margin-top:0}
 .not-found,.policy-copy { min-height:380px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:12px; }.not-found h1{margin:0;color:var(--ink);font:600 42px var(--serif)}.not-found p,.policy-copy p{max-width:650px;color:#5c6971;font-size:12px;line-height:1.8}.policy-copy h2{margin:0;color:var(--ink);font:600 29px var(--serif)}
 .article-body { max-width:850px; }.article-body>p{color:#4f5c64;font-size:14px;line-height:2; }
+.sioux-flight-photo{max-width:1000px;margin:18px 0 22px}.sioux-flight-photo img{display:block;width:100%;height:auto}.sioux-flight-photo figcaption{padding:9px 12px;color:#53616a;background:#f1f0eb;font-size:10px;line-height:1.6}
 .site-footer { color:#c1ccd2;background:#0d1c2b; }
 .footer-main { width:min(1120px,89%);display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:33px;margin:auto;padding:49px 0 42px; }
 .footer-brand .identity{color:white}.footer-brand .identity-mark{background:#162a3b}.footer-brand .identity small{color:#a4b0b7}
